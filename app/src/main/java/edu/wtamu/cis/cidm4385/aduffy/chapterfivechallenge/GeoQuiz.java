@@ -15,6 +15,8 @@ public class GeoQuiz extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final int REQUEST_CODE_CHEAT = 0;
+    public static final String KEY_CHEATER = "cheater";
+
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -22,7 +24,8 @@ public class GeoQuiz extends AppCompatActivity {
     private Button mCheatButton;
     private TextView mQuestionTextView;
 
-    private Question[] mQuestionBank = new Question[] {
+
+    private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
             new Question(R.string.question_mideast, false),
@@ -30,6 +33,10 @@ public class GeoQuiz extends AppCompatActivity {
             new Question(R.string.question_americas, true),
             new Question(R.string.question_asia, true),
     };
+
+    private boolean[] cheatArray = new boolean[mQuestionBank.length];
+    private final String[] KEY_ARRAY = new String[mQuestionBank.length];
+
 
     private int mCurrentIndex = 0;
     private boolean mIsCheater;
@@ -42,6 +49,10 @@ public class GeoQuiz extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+
+            for (int i = 0; i < KEY_ARRAY.length; ++i) {
+                cheatArray[i] = savedInstanceState.getBoolean(KEY_ARRAY[i], false);
+            }
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -120,8 +131,12 @@ public class GeoQuiz extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        Log.i(TAG, "onSaveInstanceState");
+//        Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+
+        for (int i = 0; i < KEY_ARRAY.length; ++i) {
+            savedInstanceState.putBoolean(KEY_ARRAY[i], cheatArray[i]);
+        }
     }
 
     @Override
@@ -146,7 +161,7 @@ public class GeoQuiz extends AppCompatActivity {
 
         int messageResId = 0;
 
-        if (mIsCheater) {
+        if (cheatArray[mCurrentIndex]) {
             messageResId = R.string.judgment_toast;
         } else {
             if (userPressedTrue == answerIsTrue) {
@@ -155,8 +170,13 @@ public class GeoQuiz extends AppCompatActivity {
                 messageResId = R.string.incorrect_toast;
             }
         }
-
-        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
+        Toast.makeText(this, messageResId, Toast.LENGTH_LONG)
                 .show();
+    }
+
+    private void createKeysInArray() {
+        for (int i = 0; i < KEY_ARRAY.length; ++i) {
+            KEY_ARRAY[i] = "question_" + i;
+        }
     }
 }

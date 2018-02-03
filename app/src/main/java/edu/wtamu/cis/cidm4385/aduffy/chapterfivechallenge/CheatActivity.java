@@ -18,8 +18,10 @@ public class CheatActivity extends AppCompatActivity {
             "edu.wtamu.cis.cidm4385.aduffy.chapterfivechallenge.answer_is_true";
     private static final String EXTRA_ANSWER_SHOWN =
             "edu.wtamu.cis.cidm4385.aduffy.chapterfivechallenge";
+    public static final String KEY_CHEATER = "cheater";
 
     private boolean mAnswerIsTrue;
+    private boolean mAnswerShown;
 
     private TextView mAnswerTextView;
     private Button mShowAnswerButton;
@@ -61,5 +63,22 @@ public class CheatActivity extends AppCompatActivity {
         Intent data = new Intent();
         data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
         setResult(RESULT_OK, data);
+            mAnswerShown = isAnswerShown;
     }
+
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean(KEY_CHEATER, mAnswerShown);
+
+        if(savedInstanceState != null){
+            setAnswerShownResult(savedInstanceState.getBoolean(KEY_CHEATER, false));
+            if(mAnswerIsTrue){
+                mAnswerTextView.setText(R.string.true_button);
+            }else{
+                mAnswerTextView.setText(R.string.false_button);
+            }
+        }
+    }
+
+
 }
